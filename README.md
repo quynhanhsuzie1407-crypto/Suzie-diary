@@ -1,2 +1,2 @@
 # Suzie-diary
-so-ghichu.html
+index.html
