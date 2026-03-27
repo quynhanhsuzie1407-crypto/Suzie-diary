@@ -3,41 +3,104 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quỳnh Anh VIP Diary ✿</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<title>Quỳnh Anh Diary ✿</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-body{font-family:'Poppins',sans-serif;margin:0;background:linear-gradient(135deg,#ffe6f2,#e6f7ff);} 
-header{background:#ff85b3;padding:18px;text-align:center;color:white;font-size:24px;font-weight:600;}
-.top-bar{text-align:center;margin:10px;}
-button{background:#ff6fa5;color:white;border:none;padding:8px 12px;border-radius:10px;cursor:pointer;margin:5px;}
-button:hover{background:#ff4f91;}
-input,textarea{border-radius:10px;border:1px solid #ddd;padding:8px;width:100%;}
-.container{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px;padding:15px;}
-.card{background:white;border-radius:18px;padding:15px;box-shadow:0 5px 12px rgba(0,0,0,0.1);} 
-.dark{background:#1e1e2f;color:white;}
-.dark .card{background:#2c2c3f;color:white;}
-img,video{width:100%;border-radius:10px;margin-top:5px;}
+body{
+  font-family:'Inter',sans-serif;
+  margin:0;
+  background:linear-gradient(135deg,#fdfbfb,#ebedee);
+}
+header{
+  background:rgba(255,255,255,0.6);
+  backdrop-filter:blur(10px);
+  padding:20px;
+  text-align:center;
+  font-size:22px;
+  font-weight:600;
+  color:#444;
+  border-bottom:1px solid rgba(0,0,0,0.05);
+}
+.top-bar{
+  text-align:center;
+  margin:15px;
+}
+button{
+  background:#e8ecf1;
+  color:#444;
+  border:none;
+  padding:8px 14px;
+  border-radius:12px;
+  cursor:pointer;
+  margin:5px;
+  transition:0.3s;
+}
+button:hover{
+  background:#d6dbe1;
+}
+input,textarea{
+  border-radius:12px;
+  border:1px solid #eee;
+  padding:10px;
+  width:100%;
+  background:#fafafa;
+}
+.container{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;
+  padding:20px;
+}
+.card{
+  background:rgba(255,255,255,0.7);
+  backdrop-filter:blur(12px);
+  border-radius:20px;
+  padding:18px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.05);
+  transition:0.3s;
+}
+.card:hover{
+  transform:translateY(-5px);
+}
+img,video{
+  width:100%;
+  border-radius:12px;
+  margin-top:8px;
+}
+.timeline{
+  margin:20px;
+  padding:15px;
+  background:rgba(255,255,255,0.7);
+  border-radius:20px;
+  backdrop-filter:blur(12px);
+}
+.fade{
+  animation:fadeIn 0.6s ease;
+}
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(10px);}to{opacity:1;}
+}
 </style>
 </head>
 <body>
 
-<header>✿ Quỳnh Anh VIP Diary ✿</header>
+<header>✿ Quỳnh Anh Diary ✿</header>
 
 <div class="top-bar">
 <input type="password" id="password" placeholder="Mật khẩu">
-<button onclick="checkPassword()">Mở 💖</button>
+<button onclick="checkPassword()">Mở</button>
 <button onclick="toggleDarkMode()">🌙</button>
-<button onclick="exportData()">💾 Backup</button>
-<input type="file" id="importFile" onchange="importData()">
+<button onclick="exportData()">Backup</button>
+<input type="file" onchange="importData(event)">
 </div>
 
 <div id="main" style="display:none">
-<div class="container">
+<div class="container fade">
 
 <div class="card"><h3>📖 Nhật ký</h3><textarea id="diary"></textarea><button onclick="saveData('diary')">Lưu</button></div>
 <div class="card"><h3>📚 Kiến thức</h3><textarea id="knowledge"></textarea><button onclick="saveData('knowledge')">Lưu</button></div>
 <div class="card"><h3>💭 Suy nghĩ</h3><textarea id="thoughts"></textarea><button onclick="saveData('thoughts')">Lưu</button></div>
-<div class="card"><h3>🌸 Biết ơn</h3><textarea id="gratitude"></textarea><button onclick="saveData('gratitude')">Lưu</button></div>
+<div class="card"><h3>🌿 Biết ơn</h3><textarea id="gratitude"></textarea><button onclick="saveData('gratitude')">Lưu</button></div>
 
 <div class="card">
 <h3>🖼️ Ảnh</h3>
@@ -46,30 +109,35 @@ img,video{width:100%;border-radius:10px;margin-top:5px;}
 </div>
 
 <div class="card">
-<h3>🎥 Video (Idol 💖)</h3>
+<h3>🎥 Idol</h3>
 <input type="file" id="videoInput"><button onclick="saveVideo()">Lưu video</button>
 <video id="videoPreview" controls></video>
 </div>
 
 <div class="card">
-<h3>🔍 Xem ngày</h3>
+<h3>📅 Xem ngày</h3>
 <input type="date" id="searchDate"><button onclick="loadByDate()">Xem</button>
 </div>
 
 </div>
+
+<div class="timeline">
+<h3>📌 Hành trình của bạn</h3>
+<div id="timelineContent"></div>
+</div>
+
 </div>
 
 <script>
 const correctPassword="1234";
+function today(){return new Date().toISOString().split('T')[0];}
 
 function checkPassword(){
 let input=document.getElementById('password').value;
-if(input===correctPassword){document.getElementById('main').style.display='block';loadData();}
-else alert('Sai mật khẩu 😢');}
+if(input===correctPassword){document.getElementById('main').style.display='block';loadData();loadTimeline();}
+else alert('Sai mật khẩu');}
 
-function today(){return new Date().toISOString().split('T')[0];}
-
-function saveData(id){localStorage.setItem(id+today(),document.getElementById(id).value);alert('Đã lưu 💖');}
+function saveData(id){localStorage.setItem(id+today(),document.getElementById(id).value);loadTimeline();}
 
 function loadData(){['diary','knowledge','thoughts','gratitude'].forEach(id=>{
 let d=localStorage.getItem(id+today()); if(d) document.getElementById(id).value=d;});
@@ -94,15 +162,28 @@ r.onload=()=>{localStorage.setItem('vid'+today(),r.result);document.getElementBy
 if(file) r.readAsDataURL(file);
 }
 
-function toggleDarkMode(){document.body.classList.toggle('dark');}
+function toggleDarkMode(){document.body.style.background='#1e1e2f';document.body.style.color='white';}
 
 function exportData(){let data={}; for(let i=0;i<localStorage.length;i++){let k=localStorage.key(i); data[k]=localStorage.getItem(k);} 
 let blob=new Blob([JSON.stringify(data)],{type:'application/json'});
 let a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='backup.json'; a.click();}
 
-function importData(){let file=document.getElementById('importFile').files[0]; let r=new FileReader();
-r.onload=()=>{let data=JSON.parse(r.result); for(let k in data){localStorage.setItem(k,data[k]);} alert('Khôi phục xong 💖');};
+function importData(e){let file=e.target.files[0]; let r=new FileReader();
+r.onload=()=>{let data=JSON.parse(r.result); for(let k in data){localStorage.setItem(k,data[k]);} loadTimeline();};
 if(file) r.readAsText(file);
+}
+
+function loadTimeline(){
+let container=document.getElementById('timelineContent');
+container.innerHTML='';
+for(let i=0;i<localStorage.length;i++){
+let key=localStorage.key(i);
+if(key.includes('diary')){
+let date=key.replace('diary','');
+let text=localStorage.getItem(key);
+container.innerHTML+=`<p><b>${date}</b>: ${text.substring(0,40)}...</p>`;
+}
+}
 }
 </script>
 
